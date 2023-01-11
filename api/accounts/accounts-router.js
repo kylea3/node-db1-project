@@ -1,6 +1,7 @@
 const router = require('express').Router()
-const {checkAccountId} = require('./accounts-middleware')
+const {checkAccountId, checkAccountPayload, checkAccountNameUnique} = require('./accounts-middleware')
 const Account = require('./accounts-model')
+
 
 router.get('/', (req, res, next) => {
   // DO YOUR MAGIC
@@ -20,8 +21,16 @@ router.get('/:id', checkAccountId, (req, res, next) => {
     .catch(next)
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAccountPayload, checkAccountNameUnique, (req, res, next) => {
   // DO YOUR MAGIC
+  const { name, budget } = req.body;
+  const account = { name: name.trim(), budget: budget}
+  console.log(account);
+  Account.create(account)
+    .then(account => {
+      res.status(201).json(account)
+    })
+    .catch(next)
 })
 
 router.put('/:id', (req, res, next) => {
@@ -34,6 +43,9 @@ router.delete('/:id', (req, res, next) => {
 
 router.use((err, req, res, next) => { // eslint-disable-line
   // DO YOUR MAGIC
+  res.status(err.status || 500).json({
+    message: err.message
+  })
 })
 
 module.exports = router;

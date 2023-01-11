@@ -12,23 +12,24 @@ const getById = id => {
   .first()
 }
 
-const create = account => {
+const create = async account => {
   // DO YOUR MAGIC
-  db('accounts')
+  const [id] = await db('accounts')
   .insert(account)
+  return getById(id)
 
 }
 
 const updateById = (id, account) => {
   // DO YOUR MAGIC
-  db('accounts')
+ return db('accounts')
   .where('id', id)
   .update(account)
 }
 
 const deleteById = id => {
   // DO YOUR MAGIC
-  db('accounts')
+  return db('accounts')
   .where('id', id)
   .delete()
 }
